@@ -81,6 +81,7 @@ Shoes.app(title: "Simple-Ynab",width: 600, height: 400, resizable: true) {
       @view_button = button "View File"
       @view_button.hide()
     } #stack
+    
   else
   debug("No csv file selected, User most likely canceled file selection")
   end
