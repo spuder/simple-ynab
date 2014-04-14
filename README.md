@@ -4,7 +4,7 @@ A simple ruby script to convert the csv provided by simple.com to something that
 
 ### Usage
 
-    ruby simple ~/Downloads/foo.csv
+    ruby simple.rb ~/Downloads/foo.csv
 
 A csv file will then be created in the same directory with the following name
 
