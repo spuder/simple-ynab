@@ -22,10 +22,10 @@ end
 csv = CSV.read(@csvfile, headers: true) #http://bit.ly/1mSlqfA
 # @headers = CSV.open('foo.csv','r', :headers => true).read.headers
 
-# puts "csv is #{csv}"
+# Rename the Simple csv headers to match the ynab csv headers
 indicies = @simple_keywords.map{ |column| csv.headers.index(column)}
 
-
+# Create a new csv file with the columns in the ynab order
 @newcsv = csv.map { |row| row.values_at(*indicies) }
 
 
@@ -38,7 +38,8 @@ puts "Saving new file to #{pathname}"
 CSV.open(pathname, 'w') do |the_csv|
 	the_csv << @ynab_keywords
 end
-# Save map to file
+
+# Append the new csv to the file
 CSV.open(pathname, 'a+') do |the_csv|
 	@newcsv.each do |row|
 		the_csv << row
