@@ -8,6 +8,7 @@ Gem::Specification.new do |s|
   s.email     = 'owenspencer@gmail.com'
   s.files     = ["bin/simple-ynab"]
   s.license   = 'MIT'
-
+  s.homepage  =
+    'https://github.com/spuder/simple-ynab'
   s.executables = ['simple-ynab']
 end
