@@ -1,0 +1,6 @@
+Date,Recorded at,Scheduled for,Amount,Activity,Pending,Raw description,Description,Category folder,Category,Street address,City,State,Zip,Latitude,Longitude,Memo
+2014/10/31,2014-10-30 06:35:00 PM -0700,,-19,Signature purchase,FALSE,SUPERCUTS,Supercuts,Personal,Hair,,,,,,,
+2014/10/31,2014-10-31 03:36:18 AM -0700,,"1,000.00",ACH,FALSE,herp derp,herp derp,Income,Paycheck,,,,,,,
+2014/11/01,2014-10-31 05:23:50 PM -0700,,-10.01,Signature purchase,TRUE,LITTLE CAESARS 006,Little Caesars,Food & Drink,Fast Food,,,,,,,
+2014/10/31,2014-10-31 11:19:32 AM -0700,,-2.36,Signature purchase,TRUE,Novell,Novell,Food & Drink,Fast Food,,,,,,,
+2014/11/01,2014-11-01 04:20:33 AM -0700,,0.13,ACH,FALSE,INTEREST_CREDIT,Interest_Credit,Income,Other,,,,,,,
