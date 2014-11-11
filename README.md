@@ -14,10 +14,13 @@ Currently it must be executed from the command line. Maybe someday it will have 
 
     $ simple-ynab ~/Downloads/foo.csv
 
+or for more options:
+
+    $ simple-ynab --help
+
 A csv file will then be created in the same directory with the following name
 
-
-     ~/Downloads/foo.csv.simple.csv
+    ~/Downloads/foo.simple.csv
 
 - Optionally open the new csv in excel to remove all previous months entries  
 - Import into Ynab (make sure to choose the corect date format)
