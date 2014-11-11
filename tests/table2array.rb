@@ -23,8 +23,9 @@ puts "ynab is #{ynab_array}"
   puts row
 end
 puts "ynabcsv is #{@ynabcsv.to_a}"
-puts "ynabcsv headers are #{@ynabcsv.headers}"
-@ynabcsv.add_row('foo,bar,foobar')
+# puts "ynabcsv headers are #{@ynabcsv.headers}"
+@ynabcsv << ['foo','bar','foobar']
+@ynabcsv.add_row(['foo','bar','foobar'])
 
 # Convert CSV::Table to array of arrays by reading line by line
 # Can only modify the headers by converting to arrays first

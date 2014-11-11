@@ -19,8 +19,8 @@ p array_of_arrays # => [["dur", "hur", "whur"],
                   # =>  ["1", " jack", " 26"],
                   # =>  ["2", " jill", " 27"]]
 
-# @simplecsv.delete_if do |row|
-#   #TODO: Add debugging statment showing row being deleted
-#   row[:pending].to_s.casecmp('false') != 0
-# end
-# puts @simplecsv
+# Delete every row that contains 'jack' in the 'name' column
+array_of_arrays.delete_if do |row|
+  row[:name].to_s.casecmp('jack') != 0
+end
+puts @simplecsv
