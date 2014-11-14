@@ -7,8 +7,11 @@ require 'colorize'
 require 'Date'
 
 opts = Slop.parse(:banner => 'simple-ynab', :help => true ) do
-    on 'v', 'verbose', 'Print debug information',     :argument => false
+    on 'v', 'verbose', 'Print debug information',                    :argument => false
+    on 'd', 'days=',    'Strips all rows before x days ago, e.g -d 30 ', :argument => true
+    on 'y', 'ynab_date', 'Converts date to MM/DD/YYYY. SEE README.md FOR WARNINGS!!!', :argument => false
 end
+
 
 # Which column headers in the Simple CSV match up with the columns headers needed by YNAB
 simple_keywords = ["Date", "Description", "Category", "Memo", "Amount"]
@@ -27,13 +30,9 @@ end
 
 
 ##### Import csv
-if opts.verbose?
-  puts "Importing CSV".magenta
-end
+if opts.verbose? then puts "Importing CSV".magenta end
 simplecsv = CSV.read(@csvfile) #http://bit.ly/1mSlqfA
-if opts.verbose?
-  puts "Headers are: #{simplecsv[0]}".blue
-end
+if opts.verbose? then puts "Headers are: #{simplecsv[0]}".blue end
 
 ##### Get the 'simple' header indicies
 simple_headers = simple_keywords.map{ |column| simplecsv[0].index(column)}
@@ -70,26 +69,43 @@ end
 ynab_array[0] = ynab_keywords
 if opts.verbose? then  puts "YNAB column headers are #{ynab_array[0]}".blue end
 
-##### Change the dates from YYYY-MM-DD to MM-DD-YYYY, imports now require 1 less click in YNAB
-if opts.verbose? then puts "Changing simple dates to ynab dates".magenta end
-if ynab_array[0].any?{|s| s.casecmp('date')==0}
-  date_column = ynab_array[0].find_index('Date') #Find the index of colum that contains 'Date' data (usually [0])
-else
-  puts "Unable to find word 'Date' in csv header. #{ynab_array[0]}".red
-  exit
-end
-if opts.verbose? then puts "The date column in ynab_array is #{date_column}: #{ynab_array[0][date_column]}".blue end
-ynab_array.each do |row|
-  if row[date_column] =~ /\d/ #Only apply to rows that contain dates, skip rows without nummbers (e.g. header row)
-    # puts "Changing  #{row[0]} to #{Date.parse(row[date_column]).strftime(format='%D').to_s}"
-    row[date_column] = Date.parse(row[date_column]).strftime(format='%D').to_s
-  else
-    if opts.verbose? then puts "Not changing date syntax on row #{row}".blue end
-  end
-
-end
-
 ##### Only include dates within the specified range
+ynab_array_less_dates = Array.new()
+ynab_array_less_dates[0] = ynab_array[0] # Copy the header to new array
+days_ago = Date.today() - opts[:days].to_i
+date_column = ynab_array[0].find_index('Date') #Find the index of colum that contains 'Date' data (usually [0])
+ynab_array.each do | row |
+  if opts.days? 
+    if row[date_column] =~ /\d/ and Date.parse(row[date_column]) >= days_ago  #Only apply to rows that contain dates, skip rows without nummbers (e.g. header row)
+      ynab_array_less_dates.push(row) # Only push rows less than x number of days old
+    end
+  else
+    ynab_array_less_dates.push(row) # Push all rows
+  end
+end
+
+##### Change the dates from YYYY-MM-DD to MM-DD-YYYY, saves 1 click when importing in YNAB
+# Has side affect of sometimes causing YNAB to fail to match previously imported transactions
+if opts.ynab_date?
+  puts "WARNING: YNAB may fail to match transactions previously imported with different date formats".red
+  puts "Converting dates to MM/DD/YYYY".red
+  if opts.verbose? then puts "Changing simple dates to ynab dates".magenta end
+  if ynab_array_less_dates[0].any?{|s| s.casecmp('date')==0}
+    date_column = ynab_array_less_dates[0].find_index('Date') #Find the index of colum that contains 'Date' data (usually [0])
+  else
+    puts "Unable to find word 'Date' in csv header. #{ynab_array_less_dates[0]}".red
+    exit
+  end
+  if opts.verbose? then puts "The date column in ynab_array_less_dates is #{date_column}: #{ynab_array_less_dates[0][date_column]}".blue end
+  ynab_array_less_dates.each do |row|
+    if row[date_column] =~ /\d/ #Only apply to rows that contain dates, skip rows without nummbers (e.g. header row)
+      row[date_column] = Date.parse(row[date_column]).strftime(format='%m/%d/%Y').to_s
+    else
+      if opts.verbose? then puts "Not changing date syntax on header row #{row}".blue end
+    end
+
+  end
+end
 
 ##### Save to file
 if opts.verbose? then puts "Saving to CSV file".magenta end
@@ -100,7 +116,7 @@ puts ""
 puts "Saving to new file: #{pathname}".green
 
 CSV.open(pathname,'w') do |csv|
-  ynab_array.each do | row |
+  ynab_array_less_dates.each do | row |
     csv << row
   end
 end

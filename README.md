@@ -4,7 +4,9 @@
 
 A simple ruby script to convert the csv provided by simple.com to something that ynab can understand
 
-Currently it must be executed from the command line. Maybe someday it will have a GUI
+Supported Os's
+- Mac OSX
+- Linux
 
 ### Installation
 
@@ -12,7 +14,21 @@ Currently it must be executed from the command line. Maybe someday it will have 
 
 ### Usage
 
+Convert entire CSV file  
+
     $ simple-ynab ~/Downloads/foo.csv
+    
+Convert and save only last 30 days of transactions
+
+    $ simple-ynab -d 30 ~/Downloads/foo.csv
+    
+View detailed debugging information
+
+    $ simple-ynab -v ~/Downloads/foo.csv
+   
+Convert and use YNAB date format (See known issues below)
+
+    $ simple-ynab -y ~/Downloads/foo.csv
 
 or for more options:
 
@@ -22,8 +38,6 @@ A csv file will then be created in the same directory with the following name
 
     ~/Downloads/foo.simple.csv
 
-- Optionally open the new csv in excel to remove all previous months entries  
-- Import into Ynab (make sure to choose the corect date format)
 
 ----
 Export CSV from Simple.com
@@ -32,3 +46,14 @@ Export CSV from Simple.com
 ----
 Import into YNAB
 ![](http://cl.ly/image/1U2J1n413K18/Screenshot%202014-11-11%2012.06.40.png)
+
+
+### Known issues
+
+Duplicate Transactions when using`-y` or `--ynab_date`
+
+> YNAB has a bug where if you previously import transactions containing the date in one syntax, and then import a csv with a different date syntax, YNAB will consider them as different transactions. (Even if they are identical in every other way)
+
+Workaround:
+
+> Open the CSV file and change the dates to match the format that your bank normally uses (e.g YYYY/MM/DD
