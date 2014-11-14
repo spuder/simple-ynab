@@ -13,15 +13,17 @@ end
 simple_keywords = ["Date", "Description", "Category", "Memo", "Amount"]
 ynab_keywords   = ["Date", "Payee", "Category", "Memo", "Amount"]
 
-# Get the csv file from args or prompt user
+# Get the csv file from args
 ARGV.each do |argument|
   @csvfile = ARGV[0]
 end
 
+Kernel.trap('INT') { Kernel.exit } #Exit cleanly with ctrl+c
 if ARGV.empty?
   print "No file detected, enter file name: "
   @csvfile = gets
 end
+
 
 # Import csv
 simplecsv = CSV.read(@csvfile) #http://bit.ly/1mSlqfA
@@ -35,7 +37,7 @@ if opts.verbose?
   puts "Simple_headers indexes are #{simple_headers}".blue
 end
 
-# Create a new array that omits the CSV rows when the value in the 'Pending' column is set to true
+# Create a new array that omits the CSV rows when the value in the 'Pending' column = true
 no_pending_array = Array.new()
 pending = simplecsv[0].find_index('Pending')
 simplecsv.each do |row|

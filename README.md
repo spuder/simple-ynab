@@ -25,3 +25,10 @@ A csv file will then be created in the same directory with the following name
 - Optionally open the new csv in excel to remove all previous months entries  
 - Import into Ynab (make sure to choose the corect date format)
 
+----
+Export CSV from Simple.com
+![](http://cl.ly/image/1d0N2n2q2g1o/download/Screenshot%202014-11-11%2009.27.39.png)
+
+----
+Import into YNAB
+![](http://cl.ly/image/1U2J1n413K18/Screenshot%202014-11-11%2012.06.40.png)
