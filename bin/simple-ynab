@@ -4,6 +4,7 @@
 require 'csv'
 require 'slop'
 require 'colorize'
+require 'Date'
 
 opts = Slop.parse(:banner => 'simple-ynab', :help => true ) do
     on 'v', 'verbose', 'Print debug information',     :argument => false
@@ -13,7 +14,7 @@ end
 simple_keywords = ["Date", "Description", "Category", "Memo", "Amount"]
 ynab_keywords   = ["Date", "Payee", "Category", "Memo", "Amount"]
 
-# Get the csv file from args
+##### Get the csv file from args
 ARGV.each do |argument|
   @csvfile = ARGV[0]
 end
@@ -25,19 +26,21 @@ if ARGV.empty?
 end
 
 
-# Import csv
+##### Import csv
+if opts.verbose?
+  puts "Importing CSV".magenta
+end
 simplecsv = CSV.read(@csvfile) #http://bit.ly/1mSlqfA
 if opts.verbose?
   puts "Headers are: #{simplecsv[0]}".blue
 end
 
-# Get the 'simple' header indicies
+##### Get the 'simple' header indicies
 simple_headers = simple_keywords.map{ |column| simplecsv[0].index(column)}
-if opts.verbose?
-  puts "Simple_headers indexes are #{simple_headers}".blue
-end
+if opts.verbose? then puts "Simple_headers indexes are #{simple_headers}".blue end
 
-# Create a new array that omits the CSV rows when the value in the 'Pending' column = true
+##### Create a new array that omits the CSV rows when the value in the 'Pending' column = true
+if opts.verbose? then puts "Removing pending transactions".magenta end
 no_pending_array = Array.new()
 pending = simplecsv[0].find_index('Pending')
 simplecsv.each do |row|
@@ -45,13 +48,11 @@ simplecsv.each do |row|
   if row[pending].to_s.casecmp('false') == 0 or row[pending].to_s.casecmp('Pending') == 0 
     no_pending_array.push(row)
   else
-    if opts.verbose?
-      puts "Removing pending transaction #{row}".yellow
-    end
+    if opts.verbose? then puts "Removing pending transaction #{row}".yellow end
   end
 end
 
-# Create a new array that only includes the YNAB columns
+##### Create a new array that only includes the YNAB columns
 ynab_array = Array.new()
 no_pending_array.each do |row| #Itterate over every row in new 'pending free' array
     newrow = Array.new() #Create a temporary array
@@ -61,16 +62,38 @@ no_pending_array.each do |row| #Itterate over every row in new 'pending free' ar
    ynab_array.push(newrow) #Add each row to the new YNAB array
 end
 
-# Replace the headers with the YNAB headers
+##### Replace the headers with the YNAB headers
 if opts.verbose?
-  puts "Old column headers #{ynab_array[0]}".blue
+  puts "Replacing csv headers with ynab headers".magenta
+  puts "Simple column headers #{ynab_array[0]}".blue
 end
 ynab_array[0] = ynab_keywords
-if opts.verbose?
-  puts "New column headers are #{ynab_array[0]}".blue
+if opts.verbose? then  puts "YNAB column headers are #{ynab_array[0]}".blue end
+
+##### Change the dates from YYYY-MM-DD to MM-DD-YYYY, imports now require 1 less click in YNAB
+if opts.verbose? then puts "Changing simple dates to ynab dates".magenta end
+if ynab_array[0].any?{|s| s.casecmp('date')==0}
+  date_column = ynab_array[0].find_index('Date') #Find the index of colum that contains 'Date' data (usually [0])
+else
+  puts "Unable to find word 'Date' in csv header. #{ynab_array[0]}".red
+  exit
+end
+if opts.verbose? then puts "The date column in ynab_array is #{date_column}: #{ynab_array[0][date_column]}".blue end
+ynab_array.each do |row|
+  if row[date_column] =~ /\d/ #Only apply to rows that contain dates, skip rows without nummbers (e.g. header row)
+    # puts "Changing  #{row[0]} to #{Date.parse(row[date_column]).strftime(format='%D').to_s}"
+    row[date_column] = Date.parse(row[date_column]).strftime(format='%D').to_s
+  else
+    if opts.verbose? then puts "Not changing date syntax on row #{row}".blue end
+  end
+
 end
 
-# Save to file
+##### Only include dates within the specified range
+
+##### Save to file
+if opts.verbose? then puts "Saving to CSV file".magenta end
+
 filename  = File.basename(@csvfile,".*")
 pathname  = File.join( File.dirname(@csvfile), "#{filename}.simple.csv" )
 puts ""
