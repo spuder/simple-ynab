@@ -43,12 +43,12 @@ A csv file will then be created in the same directory with the following name
     ~/Downloads/foo.simple.csv
 
 
-----
-Export CSV from Simple.com
+----  
+Export CSV from Simple.com  
 ![](http://cl.ly/image/1d0N2n2q2g1o/download/Screenshot%202014-11-11%2009.27.39.png)
 
-----
-Import into YNAB
+----  
+Import into YNAB  
 ![](http://cl.ly/image/1U2J1n413K18/Screenshot%202014-11-11%2012.06.40.png)
 
 
@@ -60,4 +60,4 @@ Duplicate Transactions when using`-y` or `--ynab_date`
 
 Workaround:
 
-> Open the CSV file and change the dates to match the format that your bank normally uses (e.g YYYY/MM/DD
+> Open the CSV file and change the dates to match the format that your bank normally uses (e.g YYYY/MM/DD), or don't use the -y option
