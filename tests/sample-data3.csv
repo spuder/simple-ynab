@@ -1,11 +1,10 @@
 Date,Recorded at,Scheduled for,Amount,Activity,Pending,Raw description,Description,Category folder,Category,Street address,City,State,Zip,Latitude,Longitude,Memo
-2014/08/06,2014-08-05 05:42:30 PM -0700,,-4.83,Signature purchase,false,SMITHS FOOD #4136        ,Smiths Food,Food & Drink,Groceries,"",Provo,UT,84601,40.226926,-111.695401,
-2014/08/05,2014-08-05 12:10:50 PM -0700,,-18.07,Pin purchase,FALSE,USPS 4971740605/936 S 250,USPS 4971740605 936 S,Uncategorized,Unknown,"",Provo,UT,84606-9998,40.221597,-111.636356,
+2014/08/06,2014-08-05 05:42:30 PM -0700,,-4.83,Signature purchase,false,SMITHS FOOD #4136        ,Smiths Food,Food & Drink,Groceries,"",xxxx,XX,11111,,
+2014/08/05,2014-08-05 12:10:50 PM -0700,,-18.07,Pin purchase,FALSE,USPS 1171711605/111 S 111,USPS 4971740605 111 S,Uncategorized,Unknown,"",Provo,UT,84606-9998,40.221597,-111.636356,
 2014/08/06,2014-08-06 08:13:24 AM -0700,,-3.22,Signature purchase,,MCDONALD'S F10437,Mcdonald's,Food & Drink,Fast Food,,,,,,,
 2014/08/08,2014-08-07 08:03:32 PM -0700,,-3.22,Signature purchase,false,MCDONALD'S F10437,Mcdonald's,Food & Drink,Fast Food,,,,,,,
 2014/08/07,2014-08-07 08:12:55 AM -0700,,-5.69,Signature purchase,TRUE,MCDONALD'S F10437,Mcdonald's,Food & Drink,Fast Food,,,,,,,
 2014/08/08,2014-08-07 08:21:23 PM -0700,,-237.35,Signature purchase,false,DELTA AIR   0062110847,Delta Air,Travel,Flights,,,,,,,
-2014/08/07,2014-08-07 12:26:45 PM -0700,,-5.92,Signature purchase,true,NOVELL,Novell,Food & Drink,Fast Food,,,,,,,
 2014/08/08,2014-08-08 01:44:56 PM -0700,,-5.50,Signature purchase,false,UTA-FRONTRUNNER TVM,Uta Frontrunner TVM,Transportation,Public Transit,,,,,,,
 2014/08/08,2014-08-08 04:16:14 AM -0700,,-6.10,Signature purchase,true,UTA-FRONTRUNNER TVM,Uta Frontrunner TVM,Transportation,Public Transit,,,,,,,
 ,2014-11-02,2014-11-03,-191.08,Pending payment,true,,,,,,,,,,,
