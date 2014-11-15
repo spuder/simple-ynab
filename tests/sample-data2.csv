@@ -1,0 +1,5 @@
+Date,Foo,bar
+2014/10/31,TRUE,derp
+2014/10/31,FALSE,derp
+2014/10/31,true,derp
+2014/10/31,false,derp
