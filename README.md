@@ -25,7 +25,11 @@ Convert and save only last 30 days of transactions
 View detailed debugging information
 
     $ simple-ynab -v ~/Downloads/foo.csv
-   
+         
+Include pending transactions
+
+    $ simple-ynab -p ~/Downloads/foo.csv
+    
 Convert and use YNAB date format (See known issues below)
 
     $ simple-ynab -y ~/Downloads/foo.csv

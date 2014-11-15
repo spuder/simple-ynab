@@ -7,11 +7,12 @@ require 'colorize'
 require 'Date'
 
 opts = Slop.parse(:banner => 'simple-ynab', :help => true ) do
-    on 'v', 'verbose', 'Print debug information',                    :argument => false
     on 'd', 'days=',    'Strips all rows before x days ago, e.g -d 30 ', :argument => true
     on 'y', 'ynab_date', 'Converts date to MM/DD/YYYY. SEE README.md FOR WARNINGS!!!', :argument => false
+    on 'p', 'pending', 'Include pending transactions', :argument => false
+    on 'v', 'verbose', 'Print debug information',                    :argument => false
+    on 'x', 'very_verbose', 'Prints an uncomfortable amount of debugging information to terminal, does not replace -v',  :argument => false
 end
-
 
 # Which column headers in the Simple CSV match up with the columns headers needed by YNAB
 simple_keywords = ["Date", "Description", "Category", "Memo", "Amount"]
@@ -23,35 +24,41 @@ ARGV.each do |argument|
 end
 
 Kernel.trap('INT') { Kernel.exit } #Exit cleanly with ctrl+c
+
 if ARGV.empty?
   print "No file detected, enter file name: "
   @csvfile = gets
 end
 
 
-##### Import csv
+# Import csv
 if opts.verbose? then puts "Importing CSV".magenta end
 simplecsv = CSV.read(@csvfile) #http://bit.ly/1mSlqfA
 if opts.verbose? then puts "Headers are: #{simplecsv[0]}".blue end
 
-##### Get the 'simple' header indicies
+
+# Get the 'simple' header indicies
 simple_headers = simple_keywords.map{ |column| simplecsv[0].index(column)}
 if opts.verbose? then puts "Simple_headers indexes are #{simple_headers}".blue end
 
-##### Create a new array that omits the CSV rows when the value in the 'Pending' column = true
+
+# Create a new array that omits the CSV rows when the value in the 'Pending' column = true
 if opts.verbose? then puts "Removing pending transactions".magenta end
+if opts.pending? then puts "User chose to include pending transactions".blue end
 no_pending_array = Array.new()
-pending = simplecsv[0].find_index('Pending')
+pending = simplecsv[0].find_index('Pending') # Column number that contains 'Pending'
 simplecsv.each do |row|
-  #Only push rows with 'fasle' in the pending column. Make sure header (row 0) gets included too. 
-  if row[pending].to_s.casecmp('false') == 0 or row[pending].to_s.casecmp('Pending') == 0 
+  # If -p (Pending) option is not provided, Only push rows with 'false' in the pending column. 
+  # Make sure header (row 0) gets included too. 
+  if opts.pending? or row[pending].to_s.casecmp('false') == 0 or row[pending].to_s.casecmp('Pending') == 0 
     no_pending_array.push(row)
   else
     if opts.verbose? then puts "Removing pending transaction #{row}".yellow end
   end
 end
 
-##### Create a new array that only includes the YNAB columns
+
+# Create a new array that only includes the YNAB columns
 ynab_array = Array.new()
 no_pending_array.each do |row| #Itterate over every row in new 'pending free' array
     newrow = Array.new() #Create a temporary array
@@ -61,30 +68,36 @@ no_pending_array.each do |row| #Itterate over every row in new 'pending free' ar
    ynab_array.push(newrow) #Add each row to the new YNAB array
 end
 
-##### Replace the headers with the YNAB headers
+
+# Replace the headers with the YNAB headers
 if opts.verbose?
   puts "Replacing csv headers with ynab headers".magenta
   puts "Simple column headers #{ynab_array[0]}".blue
 end
 ynab_array[0] = ynab_keywords
-if opts.verbose? then  puts "YNAB column headers are #{ynab_array[0]}".blue end
+if opts.verbose? then puts "YNAB column headers are #{ynab_array[0]}".blue end
 
-##### Only include dates within the specified range
+
+# Only include dates within the specified range
 ynab_array_less_dates = Array.new()
 ynab_array_less_dates[0] = ynab_array[0] # Copy the header to new array
 days_ago = Date.today() - opts[:days].to_i
 date_column = ynab_array[0].find_index('Date') #Find the index of colum that contains 'Date' data (usually [0])
 ynab_array.each do | row |
-  if opts.days? 
+  if opts.days? # User specified number of days to copy from CSV
     if row[date_column] =~ /\d/ and Date.parse(row[date_column]) >= days_ago  #Only apply to rows that contain dates, skip rows without nummbers (e.g. header row)
+      if opts.very_verbose? then puts "Transaction was less than #{opts[:days].to_i} days ago: #{row}".light_green end
       ynab_array_less_dates.push(row) # Only push rows less than x number of days old
+    else
+      if opts.very_verbose? then puts "Transaction was more than #{opts[:days].to_i} days ago: #{row}".yellow end
     end
   else
     ynab_array_less_dates.push(row) # Push all rows
   end
 end
 
-##### Change the dates from YYYY-MM-DD to MM-DD-YYYY, saves 1 click when importing in YNAB
+
+# Change the dates from YYYY-MM-DD to MM-DD-YYYY, saves 1 click when importing in YNAB
 # Has side affect of sometimes causing YNAB to fail to match previously imported transactions
 if opts.ynab_date?
   puts "WARNING: YNAB may fail to match transactions previously imported with different date formats".red
@@ -97,21 +110,21 @@ if opts.ynab_date?
     exit
   end
   if opts.verbose? then puts "The date column in ynab_array_less_dates is #{date_column}: #{ynab_array_less_dates[0][date_column]}".blue end
-  ynab_array_less_dates.each do |row|
-    if row[date_column] =~ /\d/ #Only apply to rows that contain dates, skip rows without nummbers (e.g. header row)
-      row[date_column] = Date.parse(row[date_column]).strftime(format='%m/%d/%Y').to_s
-    else
-      if opts.verbose? then puts "Not changing date syntax on header row #{row}".blue end
-    end
-
+    ynab_array_less_dates.each do |row|
+      if row[date_column] =~ /\d/ #Only apply to rows that contain dates, skip rows without nummbers (e.g. header row)
+        row[date_column] = Date.parse(row[date_column]).strftime(format='%m/%d/%Y').to_s
+      else
+        if opts.verbose? then puts "Not changing date syntax on header row #{row}".blue end
+      end
   end
 end
 
-##### Save to file
+
+# Save to file
 if opts.verbose? then puts "Saving to CSV file".magenta end
 
-filename  = File.basename(@csvfile,".*")
-pathname  = File.join( File.dirname(@csvfile), "#{filename}.simple.csv" )
+filename = File.basename(@csvfile,".*")
+pathname = File.join( File.dirname(@csvfile), "#{filename}.simple.csv" )
 puts ""
 puts "Saving to new file: #{pathname}".green
 
