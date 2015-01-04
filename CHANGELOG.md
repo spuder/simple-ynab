@@ -1,3 +1,6 @@
+2015-Jan-4: v0.1.1
+- Adds dependencies to .gepspec file (issue #4)
+
 2014-Nov-15: v0.1.0
 - Complete rewrite, now skips pending transactions by default (-p)
 - Adds color output to terminal
