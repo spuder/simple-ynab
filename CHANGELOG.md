@@ -1,3 +1,6 @@
+2016-Dec-26: v1.0.0
+- Fixes new simple csv format (issue #6)
+
 2015-Jan-4: v0.1.1
 - Adds dependencies to .gepspec file (issue #4)
 
