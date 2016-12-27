@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name      = 'simple-ynab'
-  s.version   = '1.0.0'
+  s.version   = '1.1.0'
   s.date      = '2016-12-26'
   s.summary   = "Converts csv from simple format to ynab format"
   s.description = "Converts simple bank csv to ynab csv"

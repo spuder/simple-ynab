@@ -1,3 +1,6 @@
+2016-Dec-27: v1.1.0
+- Reverts last commit (issue #7)
+
 2016-Dec-26: v1.0.0
 - Fixes new simple csv format (issue #6)
 
