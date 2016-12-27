@@ -9,13 +9,14 @@ require 'Date'
 opts = Slop.parse(:banner => 'simple-ynab', :help => true ) do
     on 'd', 'days=',    'Strips all rows before x days ago, e.g -d 30 ', :argument => true
     on 'y', 'ynab_date', 'Converts date to MM/DD/YYYY. SEE README.md FOR WARNINGS!!!', :argument => false
+    on 'p', 'pending', 'Include pending transactions', :argument => false
     on 'v', 'verbose', 'Print debug information',                    :argument => false
     on 'x', 'very_verbose', 'Prints an uncomfortable amount of debugging information to terminal, does not replace -v',  :argument => false
 end
 
 # Which column headers in the Simple CSV match up with the columns headers needed by YNAB
-simple_keywords = ["when_received", "raw_description", "merchant_description", "amount"]
-ynab_keywords   = ["Date", "Payee", "Memo", "Amount"]
+simple_keywords = ["Date", "Description", "Category", "Memo", "Amount"]
+ynab_keywords   = ["Date", "Payee", "Category", "Memo", "Amount"]
 
 ##### Get the csv file from args
 ARGV.each do |argument|
@@ -41,25 +42,25 @@ simple_headers = simple_keywords.map{ |column| simplecsv[0].index(column)}
 if opts.verbose? then puts "Simple_headers indexes are #{simple_headers}".blue end
 
 
-# # Create a new array that omits the CSV rows when the value in the 'Pending' column = true
-# if opts.verbose? then puts "Removing pending transactions".magenta end
-# if opts.pending? then puts "User chose to include pending transactions".blue end
-# no_pending_array = Array.new()
-# pending = simplecsv[0].find_index('Pending') # Column number that contains 'Pending'
-# simplecsv.each do |row|
-#   # If -p (Pending) option is not provided, Only push rows with 'false' in the pending column. 
-#   # Make sure header (row 0) gets included too. 
-#   if opts.pending? or row[pending].to_s.casecmp('false') == 0 or row[pending].to_s.casecmp('Pending') == 0 
-#     no_pending_array.push(row)
-#   else
-#     if opts.verbose? then puts "Removing pending transaction #{row}".yellow end
-#   end
-# end
+# Create a new array that omits the CSV rows when the value in the 'Pending' column = true
+if opts.verbose? then puts "Removing pending transactions".magenta end
+if opts.pending? then puts "User chose to include pending transactions".blue end
+no_pending_array = Array.new()
+pending = simplecsv[0].find_index('Pending') # Column number that contains 'Pending'
+simplecsv.each do |row|
+  # If -p (Pending) option is not provided, Only push rows with 'false' in the pending column. 
+  # Make sure header (row 0) gets included too. 
+  if opts.pending? or row[pending].to_s.casecmp('false') == 0 or row[pending].to_s.casecmp('Pending') == 0 
+    no_pending_array.push(row)
+  else
+    if opts.verbose? then puts "Removing pending transaction #{row}".yellow end
+  end
+end
 
 
 # Create a new array that only includes the YNAB columns
 ynab_array = Array.new()
-simplecsv.each do |row| #Itterate over every row in new 'pending free' array
+no_pending_array.each do |row| #Itterate over every row in new 'pending free' array
     newrow = Array.new() #Create a temporary array
     simple_headers.each do | desired_index | #Itterate over each of the columsn we want e.g. [0, 7, 9, 16, 3]
       newrow.push(row[desired_index]) #Add the new value to the temporary array
