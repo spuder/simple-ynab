@@ -1,0 +1,4 @@
+uuid	raw_description	amount	tran_code	posEntryMode	posEntryPanPosition	originalCurrency	originalCurrencyAmount	when_received	when_recorded	location	merchant_description	merchant_number
+45d318fb-806a-3327-b790-41fda3ac85e2	WENDY'S #2	($3.30)	1300	90	UNKNOWN	USD	-3.3	11/14/16 17:21	11/14/16 17:21		WENDY'S #2               	1.04445E+13
+8fed27af-c2b3-3454-b51a-3bed204a7cee	WENDY'S #2	$3.30 	5370	900	COMPLETE_TRACK			11/12/16 14:35	11/14/16 17:21		WENDY'S #2               	4.44511E+12
+abf9b27f-1160-3741-9763-b467cb29721d	KICKSTARTERCOM	($21.85)	1300	1	UNKNOWN	EUR	-20	11/14/16 17:21	11/14/16 17:21		KICKSTARTERCOM           	1.04649E+13
